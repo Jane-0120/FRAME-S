@@ -1,0 +1,4 @@
+.DS_Store
+.claude/
+# original HEVC export; the site plays the H.264 copy (video-h264.mp4)
+assets/01/video.mp4
