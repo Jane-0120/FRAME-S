@@ -3,10 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FRAMERS — Graduation Exhibition 2026</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <title>FRAME(S) — Graduation Exhibition 2026</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="is-home">
@@ -14,7 +11,7 @@
 <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-label" id="cursorLabel">View</span></div>
 
 <header class="topbar">
-  <a class="pill brand" href="#/" id="brand">FRAMERS <sup>®</sup> 2026</a>
+  <a class="pill brand" href="#/" id="brand" aria-label="FRAME(S) 2026"><span class="logo" data-logo></span></a>
   <button class="pill ghost home-only" type="button" id="aboutBtn">About</button>
   <span class="topbar-spacer"></span>
   <div class="detail-nav">
@@ -28,7 +25,7 @@
   <div class="bg-layer" aria-hidden="true"><img id="bgA" alt=""><img id="bgB" alt=""></div>
   <div class="guides" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="stage" id="stage"><div class="world" id="world"></div></div>
-  <div class="frame-ui" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="frame-ui" aria-hidden="true"></div>
   <button class="side-nav prev" id="prevBtn" type="button">◂ Prev</button>
   <button class="side-nav next" id="nextBtn" type="button">Next ▸</button>
   <ol class="index-list" id="indexList"></ol>
@@ -77,7 +74,7 @@
   </section>
 
   <a class="next-work" id="nextLink" href="#/"></a>
-  <footer class="foot"><a href="#/">↑ All Works</a></footer>
+  <footer class="foot"><a href="#/">↑ All Works</a><span id="footInfo"></span></footer>
 </article>
 
 <!-- ───────── ABOUT ───────── -->

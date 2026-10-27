@@ -36,6 +36,18 @@
   setTheme(store.get('seven-theme') || 'dark');
   $('#themeBtn').addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
 
+  /* ───────── logo / poster info ───────── */
+  // white + black files, swapped by theme in CSS; text wordmark until the files load
+  const logoHTML = () => `<img class="logo-w" src="${EX.logo.white}" alt=""><img class="logo-b" src="${EX.logo.black}" alt=""><span class="logo-text">${EX.title}</span>`;
+  $$('[data-logo]').forEach(el => { el.innerHTML = logoHTML(); });
+  const probe = new Image();
+  probe.onload = () => root.classList.add('has-logo');
+  probe.src = EX.logo.white;
+  // same header block as the posters: exhibition / title, then dates
+  const posterHead = `<p class="ph-org"><b>${EX.org} / ${EX.title}</b></p><p class="ph-date">${EX.datesLong}</p>`;
+  const posterTime = `<p><b>Time</b> | ${EX.hours.join('<br>')}</p><small>${EX.hoursNote}</small>`;
+  $('#footInfo').textContent = `${EX.org} / ${EX.title}`;
+
   /* ───────── cursor label ───────── */
   const cursor = $('#cursor'), cursorLabel = $('#cursorLabel');
   const cur = { x: -200, y: -200, tx: -200, ty: -200 };
@@ -125,7 +137,7 @@
   ARTISTS.forEach((a, i) => {
     const li = document.createElement('li');
     li.style.setProperty('--d', i);
-    li.innerHTML = `<button type="button" data-cursor="Play"><span class="il-name">${a.name}<em>${a.nameKo}</em></span><span class="il-title">${a.title}</span><span class="il-year">${a.runtime}</span></button>`;
+    li.innerHTML = `<button type="button" data-cursor="Play"><span class="il-no">${i + 1}</span><span class="il-name">${a.name}<em>${a.nameKo}</em></span><span class="il-title">${a.title}</span><span class="il-year">${a.runtime}</span></button>`;
     const b = li.querySelector('button');
     b.addEventListener('pointerenter', () => { S.hover = i; });
     b.addEventListener('pointerleave', () => { if (S.hover === i) S.hover = -1; });
@@ -583,9 +595,6 @@
   // catalog
   const catPages = $('#catPages'), catProgress = $('#catProgress'), catProgressBar = $('#catProgressBar');
   let catToken = 0;
-  const revealIO = new IntersectionObserver(entries => {
-    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); revealIO.unobserve(en.target); } });
-  }, { threshold: 0.06 });
 
   // thin reading-progress bar across the catalog pages
   let progRaf = 0;
@@ -613,9 +622,8 @@
       const fig = document.createElement('figure');
       fig.className = 'page';
       fig.dataset.k = k;
-      fig.innerHTML = `<div class="page-img loading"></div>`;
+      fig.innerHTML = `<div class="page-img"></div>`;
       catPages.append(fig);
-      revealIO.observe(fig);
       figs.push(fig);
     }
     const srcs = await getCatalog(i);
@@ -625,13 +633,11 @@
       if (!box) return;
       const img = new Image();
       img.alt = `${a.name} 웹 도록 ${k + 1}페이지`;
-      img.decoding = 'async';
-      img.onload = () => {
-        box.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`; // follow the real image ratio
-        box.classList.remove('loading');
-        img.classList.add('ready');
-      };
-      img.loading = 'lazy'; // real catalogs can be dozens of large images
+      img.onload = () => { box.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`; }; // follow the real image ratio
+      // no fade: pages show the moment they load. The first few load right away, the rest
+      // lazily (the browser starts them well before they scroll into view)
+      if (k < 3) img.fetchPriority = 'high';
+      else img.loading = 'lazy';
       box.append(img);
       img.src = src;
     });
@@ -741,10 +747,10 @@
   /* ───────── about ───────── */
   const about = $('#about');
   $('#aboutInner').innerHTML = `
-    <h2>${EX.title}</h2>
+    <h2 class="about-logo"><span class="logo" aria-label="${EX.title}">${logoHTML()}</span></h2>
+    <section class="about-poster">${posterHead}<div class="ap-meta"><p><b>Location</b> | ${EX.location}</p><div class="ap-time">${posterTime}</div></div></section>
     <div class="lede">${[].concat(EX.statement).map(t => `<p>${t}</p>`).join('')}</div>
-    <div class="facts"><span>${EX.dates}</span><span>${EX.venue}</span></div>
-    <ol class="about-list">${ARTISTS.map(a => `<li><a href="#/work/${a.id}"><b>${a.name} ${a.nameKo}</b><span>${a.title}</span></a></li>`).join('')}</ol>`;
+    <ol class="about-list">${ARTISTS.map((a, i) => `<li><a href="#/work/${a.id}"><span class="al-no">${i + 1}</span><b>${a.name} ${a.nameKo}</b><span>${a.title}</span></a></li>`).join('')}</ol>`;
   const setAbout = open => { about.classList.toggle('open', open); about.setAttribute('aria-hidden', String(!open)); };
   $('#aboutBtn').addEventListener('click', () => setAbout(true));
   $('#aboutClose').addEventListener('click', () => setAbout(false));

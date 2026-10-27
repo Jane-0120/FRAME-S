@@ -14,11 +14,19 @@
    ───────────────────────────────────────────────────────────── */
 
 window.EXHIBITION = {
-  title: 'FRAMERS',
+  title: 'FRAME(S)',
   year: '2026',
   subtitle: 'Graduation Exhibition — Moving Image',
   dates: '2026.11.03–11.08',
-  venue: '성신여자대학교 파이룸',
+  venue: '성신여자대학교 수정관 1층 가온',
+  // 포스터 상단 정보 블록 (홈 / About / 푸터)
+  org: 'SSWD Design Graduation Exhibition / AI Studio',
+  datesLong: 'Tuesday 3rd November 2026 – Sunday 8th November 2026',
+  location: '2, Bomun-ro 34da-gil, Seongbuk-gu, Seoul, Soojung Building 1F Gaon',
+  hours: ['Tue : 14:00 – 20:00', 'Wed – Sat : 10:00 – 20:00 / Sun : 10:00 – 18:00'],
+  hoursNote: '*Screening every hour on the hour.',
+  // 프로젝트 로고 (없으면 텍스트 로고로 대체)
+  logo: { black: 'assets/logo/logo_black.png', white: 'assets/logo/logo_white.png' },
   // About 화면 본문 (문단별)
   statement: [
     '2026 성신여자대학교 졸업전시 AI디자인스튜디오의 Film 프로젝트입니다. 7명의 디자이너가 다양한 AI 툴을 활용해, 각자의 프레임 안에서 서로 다른 주제와 이야기를 영상으로 풀어냅니다.',
@@ -31,13 +39,13 @@ window.ARTISTS = [
     id: '01', name: 'Kim Jane', nameKo: '김제인',
     title: 'THE CRITIC',
     description: 'AI에 선택과 판단을 맡기는 일상을 가까운 미래로 확장한 스페큘러티브 디자인 프로젝트다. 가상의 AI 브랜드 AETER와 그 기술을 활용하는 음식 비평가의 이야기를 단편 영화로 풀어낸다.',
-    year: 2026, runtime: '00:21',
+    year: 2026, runtime: '08:00',
     medium: 'Speculative design film',
     ratio: '21:9', // 영상 비율 (기본 16:9)
     // 작품 설명 아래에 표시될 외부 링크
     link: { label: 'Pre-production WEB', url: 'https://jane-0120.github.io/THECRITIC/' },
     thumb: 'assets/01/thumb.png',
-    video: 'assets/01/video-h264.mp4', // H.264 copy of video.mp4 (HEVC) so every browser can play it
+    video: 'assets/01/video-h264.mp4', // THE_CRITIC.mp4 re-encoded to 1080p H.264 (~96MB, under GitHub's 100MB limit)
     // 1.jpg ~ 36.jpg 순서대로
     catalog: Array.from({ length: 36 }, (_, k) => `assets/01/${k + 1}.jpg`)
   },
@@ -53,23 +61,25 @@ window.ARTISTS = [
   },
   {
     id: '03', name: 'Myeong Suyeon', nameKo: '명수연',
-    title: 'Soft Archive',
-    description: '버려진 사진과 홈비디오를 다시 촬영해 만든 부드러운 아카이브. 정확한 기록 대신 온도와 질감으로 남은 개인의 역사를 천천히 펼쳐 보인다.',
+    title: 'NEVERAFTER',
+    description: "NEVERAFTER는 '어린 왕자'의 상징을 재해석한 뒤틀린 동화 속 세계를 배경으로, 사회의 기준에 맞춰 끊임없이 자신을 소모하는 현대인의 모습을 그린 가상 밴드 뮤직비디오 프로젝트이다.",
     year: 2026, runtime: '08:03',
     medium: 'Single-channel video, 4K, color, sound',
-    thumb: '',
+    thumb: 'assets/03/thumb.jpg',
     video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-    catalog: []
+    // 1.jpg ~ 9.jpg 순서대로
+    catalog: Array.from({ length: 9 }, (_, k) => `assets/03/${k + 1}.jpg`)
   },
   {
     id: '04', name: 'Baek Jeongwon', nameKo: '백정원',
-    title: 'Between Frames',
-    description: '프레임과 프레임 사이, 보이지 않는 시간의 틈에 주목한다. 정지와 움직임의 경계를 늘리고 비틀며 관객이 시간을 감각하는 방식을 다시 묻는다.',
+    title: 'DÉDOUBLEMENT',
+    description: '‘나는 누구인가’라는 질문에서 출발한 실사와 2D 애니메이션이 결합된 단편 영화이다. 현실에서 분리된 인물이 다양한 자아와 감정으로 이루어진 내면세계를 통과하는 과정을 통해, 자신을 마주하고 바라본다는 것의 의미를 고찰한다.',
     year: 2026, runtime: '05:27',
     medium: 'Video installation, color, silent',
-    thumb: '',
+    thumb: 'assets/04/thumb.jpg',
     video: 'https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4',
-    catalog: []
+    // 1.jpg ~ 5.jpg 순서대로
+    catalog: Array.from({ length: 5 }, (_, k) => `assets/04/${k + 1}.jpg`)
   },
   {
     id: '05', name: 'Woo Seoyeon', nameKo: '우서연',
@@ -92,13 +102,14 @@ window.ARTISTS = [
     catalog: []
   },
   {
-    id: '07', name: 'Choi Jieun', nameKo: '최지은',
-    title: 'Residual Heat',
-    description: '사람이 떠난 자리에 남은 열기를 시각화한 작업이다. 열화상 이미지와 실사 영상을 교차시키며 부재 속에 남겨진 존재의 흔적을 더듬는다.',
+    id: '07', name: 'Choi Ji eun', nameKo: '최지은',
+    title: 'UNINVITED',
+    description: 'UNINVITED는 고향으로 돌아온 작은 파리가 낯설게 변해버린 도시를 마주하며 겪는 여정을 그린 단편 애니메이션이다. 익숙했던 공간에서 이방인이 되어버린 파리의 시선을 통해, 우리가 당연하게 여겨온 공존의 의미를 되묻는 작품이다.',
     year: 2026, runtime: '09:12',
     medium: 'Single-channel video, color, sound',
-    thumb: '',
+    thumb: 'assets/07/thumb.jpg',
     video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-    catalog: []
+    // 1.jpg ~ 24.jpg 순서대로
+    catalog: Array.from({ length: 24 }, (_, k) => `assets/07/${k + 1}.jpg`)
   }
 ];
