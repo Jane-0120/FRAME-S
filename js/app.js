@@ -77,7 +77,7 @@
     el.setAttribute('aria-label', `${a.name} — ${a.title}`);
     el.innerHTML = `<span class="card-inner"><img src="${a._thumb}" alt="" draggable="false"><span class="card-meta"><span>${a.name}</span><span>${a.title}</span></span></span>`;
     const inner = el.querySelector('.card-inner');
-    el.addEventListener('pointerenter', () => hoverCard(i));
+    el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hoverCard(i); });
     el.addEventListener('pointerleave', () => {
       inner.style.transform = '';
       if (S.layout !== 'stack' && S.hover === i) S.hover = -1; // stack keeps its featured card (see hoverCard)
@@ -114,6 +114,7 @@
     anchorPt = { ...lastPt };
   }
   home.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
     lastPt = { x: e.clientX, y: e.clientY };
     if (S.layout !== 'stack' || drag) return;
     const c = e.target.closest('.card');
@@ -139,7 +140,7 @@
     li.style.setProperty('--d', i);
     li.innerHTML = `<button type="button" data-cursor="Play"><span class="il-no">${i + 1}</span><span class="il-name">${a.name}<em>${a.nameKo}</em></span><span class="il-title">${a.title}</span><span class="il-year">${a.runtime}</span></button>`;
     const b = li.querySelector('button');
-    b.addEventListener('pointerenter', () => { S.hover = i; });
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') S.hover = i; });
     b.addEventListener('pointerleave', () => { if (S.hover === i) S.hover = -1; });
     b.addEventListener('click', () => openWork(i, cards[i]));
     indexList.append(li);
@@ -339,7 +340,7 @@
 
     S.t += dt;
     const k = 1 - Math.pow(0.0006, dt);
-    S.pv = lerp(S.pv, S.p, 1 - Math.pow(0.003, dt));
+    S.pv = lerp(S.pv, S.p, 1 - Math.pow(drag && drag.moved ? 0.00002 : 0.003, dt));
     if (Math.abs(S.pv - S.p) < 0.0005) S.pv = S.p;
     S.mxv = lerp(S.mxv, S.mx, k * 0.5);
     S.myv = lerp(S.myv, S.my, k * 0.5);
@@ -406,27 +407,50 @@
     nudge(clamp(d, -120, 120) * 0.0032);
   }, { passive: false });
 
+  // Drag / swipe. The gesture locks to its dominant axis (left or up = forward), so a
+  // slightly diagonal swipe doesn't cancel itself out, and on release the flick speed
+  // carries on: a short, deliberate swipe still lands on the next card.
+  const dragUnit = axis => S.layout === 'tunnel' ? (W < 760 ? 170 : 260)
+    : axis === 'x' ? cw * (S.layout === 'stack' ? 0.8 : 1.1) : ch * 0.6;
   stage.addEventListener('pointerdown', e => {
     if (S.layout === 'index' || e.button !== 0) return;
-    drag = { x: e.clientX, y: e.clientY, p: S.p, moved: false };
+    clearTimeout(snapT);
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, p: S.p, lp: S.p, lt: e.timeStamp, v: 0, axis: null, moved: false, touch: e.pointerType !== 'mouse' };
   });
   addEventListener('pointermove', e => {
-    cur.tx = e.clientX; cur.ty = e.clientY;
-    S.mx = e.clientX / W * 2 - 1;
-    S.my = e.clientY / H * 2 - 1;
-    S.px = e.clientX; S.py = e.clientY;
-    if (!drag) return;
+    if (e.pointerType === 'mouse') {
+      cur.tx = e.clientX; cur.ty = e.clientY;
+      S.mx = e.clientX / W * 2 - 1;
+      S.my = e.clientY / H * 2 - 1;
+      S.px = e.clientX; S.py = e.clientY;
+    }
+    if (!drag || e.pointerId !== drag.id) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (!drag.moved && Math.hypot(dx, dy) > 6) { drag.moved = true; S.sticky = -1; home.classList.add('dragging'); }
+    if (!drag.moved && Math.hypot(dx, dy) > (drag.touch ? 10 : 6)) {
+      drag.moved = true;
+      drag.axis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+      S.sticky = -1; S.hover = -1;
+      home.classList.add('dragging');
+    }
+    if (!drag.moved) return;
+    const p = drag.p - (drag.axis === 'x' ? dx : dy) / dragUnit(drag.axis);
+    const dt = e.timeStamp - drag.lt;
+    if (dt > 0) drag.v = lerp(drag.v, (p - drag.lp) / dt, 0.5); // cards per ms
+    drag.lp = p; drag.lt = e.timeStamp;
+    S.p = p;
+    settle();
+  });
+  const endDrag = e => {
+    if (!drag || e.pointerId !== drag.id) return;
     if (drag.moved) {
-      const amount = S.layout === 'tunnel' ? -(dx + dy) / 260 : -dx / (cw * (S.layout === 'stack' ? 0.8 : 1.1));
-      S.p = drag.p + amount;
+      suppressUntil = performance.now() + 120;
+      const v = e.timeStamp - drag.lt < 90 ? drag.v : 0; // finger rested before lifting: no fling
+      const from = Math.round(drag.p), moved = S.p - drag.p;
+      let to = Math.round(S.p + clamp(v * 200, -1.6, 1.6));
+      if (to === from && Math.abs(moved) > 0.12) to = from + Math.sign(moved);
+      S.p = to;
       settle();
     }
-  });
-  const endDrag = () => {
-    if (!drag) return;
-    if (drag.moved) { suppressUntil = performance.now() + 120; S.p = Math.round(S.p); settle(); }
     drag = null;
     home.classList.remove('dragging');
   };
@@ -751,10 +775,11 @@
     <section class="about-poster">${posterHead}<div class="ap-meta"><p><b>Location</b> | ${EX.location}</p><div class="ap-time">${posterTime}</div></div></section>
     <div class="lede">${[].concat(EX.statement).map(t => `<p>${t}</p>`).join('')}</div>
     <ol class="about-list">${ARTISTS.map((a, i) => `<li><a href="#/work/${a.id}"><span class="al-no">${i + 1}</span><b>${a.name} ${a.nameKo}</b><span>${a.title}</span></a></li>`).join('')}</ol>`;
-  const setAbout = open => { about.classList.toggle('open', open); about.setAttribute('aria-hidden', String(!open)); };
+  const setAbout = open => { about.classList.toggle('open', open); document.body.classList.toggle('about-open', open); about.setAttribute('aria-hidden', String(!open)); };
   $('#aboutBtn').addEventListener('click', () => setAbout(true));
   $('#aboutClose').addEventListener('click', () => setAbout(false));
-  about.addEventListener('click', e => { if (e.target.closest('a')) setAbout(false); });
+  // any click closes it (links still navigate), unless the click ended a text selection
+  about.addEventListener('click', () => { if (!String(getSelection())) setAbout(false); });
 
   /* ───────── keyboard ───────── */
   addEventListener('keydown', e => {

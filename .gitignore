@@ -2,3 +2,7 @@
 .claude/
 # original HEVC export; the site plays the H.264 copy (video-h264.mp4)
 assets/01/video.mp4
+# originals over GitHub's 100MB limit; the site plays the H.264 copies (video-h264.mp4)
+assets/02/video.mp4
+assets/06/video.mp4
+assets/07/video.mp4

@@ -22,15 +22,16 @@ window.EXHIBITION = {
   // 포스터 상단 정보 블록 (홈 / About / 푸터)
   org: 'SSWD Design Graduation Exhibition / AI Studio',
   datesLong: 'Tuesday 3rd November 2026 – Sunday 8th November 2026',
-  location: '2, Bomun-ro 34da-gil, Seongbuk-gu, Seoul, Soojung Building 1F Gaon',
+  location: '2, Bomun-ro 34da-gil, Seongbuk-gu, Seoul, Nanhyang Building 4F π Room',
   hours: ['Tue : 14:00 – 20:00', 'Wed – Sat : 10:00 – 20:00 / Sun : 10:00 – 18:00'],
-  hoursNote: '*Screening every hour on the hour.',
+  hoursNote: '*Screening every half hour.',
   // 프로젝트 로고 (없으면 텍스트 로고로 대체)
-  logo: { black: 'assets/logo/logo_black.png', white: 'assets/logo/logo_white.png' },
+  logo: { black: 'assets/logo/logo_black.svg', white: 'assets/logo/logo_white.svg' },
   // About 화면 본문 (문단별)
   statement: [
-    '2026 성신여자대학교 졸업전시 AI디자인스튜디오의 Film 프로젝트입니다. 7명의 디자이너가 다양한 AI 툴을 활용해, 각자의 프레임 안에서 서로 다른 주제와 이야기를 영상으로 풀어냅니다.',
-    '각 작품의 전체 영상을 감상하고, 아이디어가 영상으로 완성되기까지의 제작 과정을 살펴보세요.'
+    '2026 성신여자대학교 AI 디자인스튜디오의 Film 프로젝트입니다.',
+    '7명의 디자이너가 AI를 활용해 각자의 프레임 안에서 서로 다른 이야기를 단편 영화로 풀어냅니다.',
+    '각 작품의 전체 영상을 감상하고 아이디어가 영상으로 완성되기까지의 제작 과정을 살펴보세요.'
   ]
 };
 
@@ -51,12 +52,12 @@ window.ARTISTS = [
   },
   {
     id: '02', name: 'Kim Seongyun', nameKo: '김성윤',
-    title: 'Signal Loss',
+    title: 'ENTROPY',
     description: '끊기고 지연되는 신호 속에서 전달되지 못한 말들을 기록한다. 두 개의 화면은 서로를 향해 말을 걸지만, 노이즈와 공백이 그 사이를 계속해서 가로막는다.',
-    year: 2026, runtime: '04:15',
+    year: 2026, runtime: '03:18',
     medium: 'Two-channel video, b&w, sound',
     thumb: '',
-    video: 'https://vjs.zencdn.net/v/oceans.mp4',
+    video: 'assets/02/video-h264.mp4', // 김성윤_ENTROPY.mp4 (video.mp4) re-encoded to H.264 under 100MB
     catalog: []
   },
   {
@@ -74,10 +75,10 @@ window.ARTISTS = [
     id: '04', name: 'Baek Jeongwon', nameKo: '백정원',
     title: 'DÉDOUBLEMENT',
     description: '‘나는 누구인가’라는 질문에서 출발한 실사와 2D 애니메이션이 결합된 단편 영화이다. 현실에서 분리된 인물이 다양한 자아와 감정으로 이루어진 내면세계를 통과하는 과정을 통해, 자신을 마주하고 바라본다는 것의 의미를 고찰한다.',
-    year: 2026, runtime: '05:27',
+    year: 2026, runtime: '03:20',
     medium: 'Video installation, color, silent',
     thumb: 'assets/04/thumb.jpg',
-    video: 'https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4',
+    video: 'assets/04/video.mp4',
     // 1.jpg ~ 5.jpg 순서대로
     catalog: Array.from({ length: 5 }, (_, k) => `assets/04/${k + 1}.jpg`)
   },
@@ -92,23 +93,23 @@ window.ARTISTS = [
     catalog: []
   },
   {
-    id: '06', name: 'Choi Jiwon', nameKo: '최지원',
-    title: 'Blue Hour Protocol',
+    id: '06', name: 'Choi Jeewon', nameKo: '최지원',
+    title: 'Still in Inferno: Limbo',
     description: '해가 진 직후 하늘이 푸르게 물드는 짧은 시간을 하나의 규칙처럼 반복하는 3D 애니메이션. 가상의 도시는 매일 같은 시각, 같은 빛으로 다시 깨어난다.',
-    year: 2026, runtime: '03:58',
+    year: 2026, runtime: '01:47',
     medium: '3D animation, color, sound',
     thumb: '',
-    video: 'https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_1MB.mp4',
+    video: 'assets/06/video-h264.mp4', // 최지원_Still in Inferno_Limbo.mp4 (video.mp4) re-encoded to H.264 under 100MB
     catalog: []
   },
   {
     id: '07', name: 'Choi Ji eun', nameKo: '최지은',
     title: 'UNINVITED',
     description: 'UNINVITED는 고향으로 돌아온 작은 파리가 낯설게 변해버린 도시를 마주하며 겪는 여정을 그린 단편 애니메이션이다. 익숙했던 공간에서 이방인이 되어버린 파리의 시선을 통해, 우리가 당연하게 여겨온 공존의 의미를 되묻는 작품이다.',
-    year: 2026, runtime: '09:12',
+    year: 2026, runtime: '03:12',
     medium: 'Single-channel video, color, sound',
     thumb: 'assets/07/thumb.jpg',
-    video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    video: 'assets/07/video-h264.mp4', // 최지은_UNINVITED.mp4 (video.mp4) re-encoded to H.264 under 100MB
     // 1.jpg ~ 24.jpg 순서대로
     catalog: Array.from({ length: 24 }, (_, k) => `assets/07/${k + 1}.jpg`)
   }
