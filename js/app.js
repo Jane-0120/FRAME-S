@@ -652,12 +652,21 @@
     }
     const srcs = await getCatalog(i);
     if (tok !== catToken) return;
-    srcs.forEach((src, k) => {
+    srcs.forEach((entry, k) => {
       const box = figs[k] && figs[k].querySelector('.page-img');
       if (!box) return;
+      const { src, srcset, w, h } = typeof entry === 'string' ? { src: entry } : entry;
       const img = new Image();
       img.alt = `${a.name} 웹 도록 ${k + 1}페이지`;
-      img.onload = () => { box.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`; }; // follow the real image ratio
+      // known size: reserve the real height up front so lazy loading and scrolling don't jump
+      if (w && h) box.style.aspectRatio = `${w} / ${h}`;
+      else img.onload = () => { box.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`; }; // follow the real image ratio
+      if (srcset) {
+        // the catalog column is ~72vw on desktop, full width on phones (≤760px);
+        // claim a bit more so the browser never picks a size it then has to upscale
+        img.sizes = '(max-width: 760px) 100vw, 80vw';
+        img.srcset = srcset;
+      }
       // no fade: pages show the moment they load. The first few load right away, the rest
       // lazily (the browser starts them well before they scroll into view)
       if (k < 3) img.fetchPriority = 'high';
