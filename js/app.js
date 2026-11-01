@@ -812,4 +812,18 @@
   setLayout(LAYOUTS.some(l => l[0] === saved) ? saved : 'stack');
   route();
   requestAnimationFrame(loop);
+
+  /* ───────── idle reset ─────────
+     after 10 minutes with no input, reload back to the home page;
+     a playing video counts as activity so a viewer isn't cut off mid-film */
+  const IDLE_MS = 10 * 60 * 1000;
+  let lastActive = Date.now();
+  const markActive = () => { lastActive = Date.now(); };
+  ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(t =>
+    addEventListener(t, markActive, { passive: true, capture: true }));
+  setInterval(() => {
+    if (!video.paused && !video.ended) markActive();
+    if (Date.now() - lastActive < IDLE_MS) return;
+    location.replace(location.pathname + location.search);
+  }, 5000);
 })();
