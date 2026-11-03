@@ -87,10 +87,10 @@ window.ARTISTS = [
     id: '03', name: 'Myeong Suyeon', nameKo: '명수연',
     title: 'NEVERAFTER',
     description: "NEVERAFTER는 '어린 왕자'의 상징을 재해석한 뒤틀린 동화 속 세계를 배경으로, 사회의 기준에 맞춰 끊임없이 자신을 소모하는 현대인의 모습을 그린 가상 밴드 뮤직비디오 프로젝트이다.",
-    year: 2026, runtime: '08:03',
+    year: 2026, runtime: '02:24',
     medium: 'Single-channel video, 4K, color, sound',
     thumb: 'assets/03/thumb.webp',
-    video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    video: 'assets/03/video-h264.mp4', // 명수연NEVERAFTER_최종.mp4 (4K) re-encoded to 1080p H.264 under 100MB
     // 1.webp ~ 9.webp 순서대로 (Adobe RGB → sRGB 변환)
     catalog: pages('03', fill(9, [1920, 1080]))
   },
@@ -109,10 +109,10 @@ window.ARTISTS = [
     id: '05', name: 'Woo Seoyeon', nameKo: '우서연',
     title: '詩NEMA',
     description: '자작시를 영화로 옮긴 AI POETRY FILM 프로젝트.\n글을 더 선호하는 사람이 있고, 영상을 더 선호하는 사람이 있다. 요즘은 더욱이 영상을 선호하는 사람들이 많은 듯하다. 따라서 나는 글을 좋아하는 이들뿐만 아니라 영상을 더 선호하는 사람들도 내 시를 감상해 주길 바라는 마음에 詩NEMA를 기획하게 되었다. 영상은 눈사람, 금붕어의 다짐, 자두 총 3개로 구성된다.',
-    year: 2026, runtime: '07:50',
+    year: 2026, runtime: '03:18',
     medium: 'Single-channel video, color, sound',
     thumb: 'assets/05/thumb.webp',
-    video: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4',
+    video: 'assets/05/video-h264.mp4', // 우서연_詩NEMA.mp4 re-encoded to H.264 under 100MB
     // 1.webp ~ 16.webp 순서대로
     catalog: pages('05', fill(16, [1920, 1080]))
   },
