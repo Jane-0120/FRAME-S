@@ -265,17 +265,14 @@ body.is-detail .home-only { display: none; }
 .home.leaving > :not(.stage) { opacity: 0 !important; transition: opacity .4s; }
 
 .flip { position: fixed; z-index: 90; pointer-events: none; overflow: hidden; background: #000 center / cover no-repeat; }
-.flip video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s; }
-.flip video.on { opacity: 1; }
 
 /* ───────── DETAIL ───────── */
 .detail { position: relative; min-height: 100vh; }
 .detail.enter { animation: fadeIn .6s ease both; }
 
-/* one box for every work: 16:9, but short enough that the catalog peeks in below (--peek) */
-/* --top: black band above (and below) the video, taller than the top nav (14px + 34px)
-   --peek: how much of the catalog shows below on arrival */
-.hero { --top: 76px; --peek: 48px; position: relative; height: min(calc(56.25vw + var(--top) * 2), calc(100svh - var(--peek))); background: #000; }
+/* one box for every work: 16:9, never taller than the screen; it comes after the catalog */
+/* --top: black band above (and below) the video, taller than the top nav (14px + 34px) */
+.hero { --top: 76px; position: relative; height: min(calc(56.25vw + var(--top) * 2), 100svh); background: #000; }
 .player {
   position: absolute; inset: var(--top) 0; background: #000; overflow: hidden; /* same black band above and below */
   /* the hero always reads as a dark screening room */
@@ -349,10 +346,10 @@ body.video-idle .topbar { opacity: 0; pointer-events: none; }
 }
 
 /* catalog */
-.catalog { padding: 0 0 0 6vw; }
+.catalog { padding: 76px 0 0 6vw; } /* first thing on the page: starts below the top nav */
 
 .cat-body { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(0, 4fr); gap: 4vw; }
-.cat-aside { position: sticky; top: 84px; align-self: start; padding-top: 64px; }
+.cat-aside { position: sticky; top: 76px; align-self: start; }
 .cat-num { font-size: clamp(28px, 2.6vw, 44px); font-weight: 400; letter-spacing: -.035em; line-height: 1.05; margin-bottom: 24px; }
 .cat-dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; font: 400 12.5px/1.4 var(--mono); letter-spacing: .03em; }
 .cat-dl dt { color: var(--mute); text-transform: uppercase; }
@@ -485,9 +482,9 @@ body.about-open .about-close { display: inline-flex; }
   .player.pip { overflow: hidden; height: auto; }
   .tc { display: none; }
 
-  .catalog { padding: 0; }
+  .catalog { padding: 56px 0 0; }
   .cat-body { grid-template-columns: 1fr; gap: 0; }
-  .cat-aside { position: static; padding: 36px 16px 32px; }
+  .cat-aside { position: static; padding: 8px 16px 32px; }
   .cat-num { font-size: 26px; margin-bottom: 16px; }
   .cat-desc { font-size: 15px; max-width: none; }
   .cat-progress { display: none; }
@@ -514,8 +511,7 @@ body.about-open .about-close { display: inline-flex; }
 }
 
 /* ───────── exhibition display (27" Mac, 2560×1440) ─────────
-   Only screens well beyond any laptop default match, so phones and laptops are untouched.
-   Keep this query and --top / --peek in sync with LARGE_SCREEN in app.js. */
+   Only screens well beyond any laptop default match, so phones and laptops are untouched. */
 @media (min-width: 2200px) and (min-height: 1000px) {
   .mono, .eyebrow { font-size: 16px; }
   .stage { perspective: 1800px; }
@@ -557,7 +553,7 @@ body.about-open .about-close { display: inline-flex; }
   .il-title, .il-year { font-size: 16px; }
 
   /* ── detail ── */
-  .hero { --top: 104px; --peek: 64px; }
+  .hero { --top: 104px; }
   .hero-info { max-width: 1200px; }
   .d-title { font-size: 48px; }
   .d-name { font-size: 17px; margin-top: 12px; }
@@ -575,8 +571,9 @@ body.about-open .about-close { display: inline-flex; }
   .player.pip .pip-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 16px; }
 
   /* catalog: wider text column, so the description reads at a distance */
+  .catalog { padding-top: 104px; }
   .cat-body { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: 5vw; }
-  .cat-aside { top: 120px; padding-top: 96px; }
+  .cat-aside { top: 104px; }
   .cat-num { font-size: 68px; margin-bottom: 36px; }
   .cat-desc { font-size: 23px; max-width: none; margin-bottom: 44px; }
   .cat-link { margin: -16px 0 44px; font-size: 20px; }

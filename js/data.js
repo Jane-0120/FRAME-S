@@ -120,10 +120,10 @@ window.ARTISTS = [
     id: '06', name: 'Choi Jeewon', nameKo: '최지원',
     title: 'Still in Inferno',
     description: '《Still in Inferno》는 단테의 《지옥편(Inferno)》 속 단계별 지옥을 모티브로, 현대인이 일상에서 직면하는 무기력, 분노, 집착, 고립, 그리고 타성이라는 고통의 메커니즘을 옴니버스 형식으로 조명한다.\n지옥은 비현실적인 유황 불길이 아닌, 매일 반복되는 어두운 방안의 고요, 차가운 액정 화면의 잔상, 벗어나지 못하는 무겁고 막막한 새벽의 공기 속에서 조용히 작동한다.',
-    year: 2026, runtime: '01:47',
+    year: 2026, runtime: '04:56',
     medium: '3D animation, color, sound',
     thumb: 'assets/06/thumb.webp', // SII_A5_최지원.jpg
-    video: 'assets/06/video-h264.mp4', // 최지원_Still in Inferno_Limbo.mp4 (video.mp4) re-encoded to H.264 under 100MB
+    video: 'assets/06/video-h264.mp4', // 최지원_Still in Infermo.mp4 re-encoded to H.264 under 100MB
     // 1.webp ~ 15.webp 순서대로
     catalog: pages('06', fill(15, [1920, 1080]))
   },
