@@ -470,11 +470,13 @@
   /* ───────── open (card → hero) ───────── */
   let opening = false;
   // same video box for every work (matches .hero in CSS); the catalog peeks in below it
-  const TOP = 76, PEEK = 48; // keep in sync with --top / --peek on .hero
+  const LARGE_SCREEN = matchMedia('(min-width: 2200px) and (min-height: 1000px)'); // exhibition display block in style.css
+  const heroTop = () => (LARGE_SCREEN.matches ? 104 : 76); // keep in sync with --top / --peek on .hero
+  const heroPeek = () => (LARGE_SCREEN.matches ? 64 : 48);
   const isPhone = () => innerWidth <= 760; // matches the CSS breakpoint
-  const heroHeight = () => (isPhone() ? 56 + innerWidth * 9 / 16 + 112 : Math.min(innerWidth * 9 / 16 + TOP * 2, innerHeight - PEEK));
+  const heroHeight = () => (isPhone() ? 56 + innerWidth * 9 / 16 + 112 : Math.min(innerWidth * 9 / 16 + heroTop() * 2, innerHeight - heroPeek()));
   // where the video box sits inside the hero (phones: fixed 16:9 strip under the bar)
-  const videoBox = () => (isPhone() ? { top: 56, h: innerWidth * 9 / 16 } : { top: TOP, h: heroHeight() - TOP * 2 });
+  const videoBox = () => (isPhone() ? { top: 56, h: innerWidth * 9 / 16 } : { top: heroTop(), h: heroHeight() - heroTop() * 2 });
   function openWork(i, el) {
     if (opening) return;
     const a = ARTISTS[i];
