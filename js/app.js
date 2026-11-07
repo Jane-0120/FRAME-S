@@ -781,7 +781,10 @@
 
   /* ───────── exhibition mode ─────────
      a film plays through to the end once, then the kiosk goes straight back home */
+  video.loop = false;
   video.addEventListener('ended', () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    if (video.webkitDisplayingFullscreen && video.webkitExitFullscreen) video.webkitExitFullscreen();
     if (!detail.hidden) location.hash = '#/';
   });
 
