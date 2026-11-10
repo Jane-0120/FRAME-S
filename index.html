@@ -14,7 +14,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://jane-0120.github.io/FRAMERS/assets/og-image.png">
-  <link rel="stylesheet" href="css/style.css?v=20261107">
+  <link rel="stylesheet" href="css/style.css?v=20261110">
 </head>
 <body class="is-home">
 
@@ -48,22 +48,9 @@
 
 <!-- ───────── DETAIL ───────── -->
 <article class="detail" id="detail" hidden>
-  <section class="catalog" id="catalog">
-    <div class="cat-body">
-      <aside class="cat-aside">
-        <div class="cat-num" id="catNum"></div>
-        <p class="cat-desc" id="catDesc"></p>
-        <a class="cat-link" id="catLink" href="#" target="_blank" rel="noopener" hidden>Link<span aria-hidden="true">↗</span></a>
-        <dl class="cat-dl" id="catDl"></dl>
-        <div class="cat-progress" id="catProgress" aria-hidden="true"><span id="catProgressBar"></span></div>
-      </aside>
-      <div class="cat-pages" id="catPages"></div>
-    </div>
-  </section>
-
   <section class="hero" id="hero">
     <div class="player" id="player">
-      <video id="video" playsinline preload="metadata"></video>
+      <video id="video" playsinline preload="metadata" loop></video>
       <div class="player-shade"></div>
       <div class="video-error">Video unavailable — js/data.js 의 video 경로를 확인하세요</div>
       <div class="hero-info">
@@ -76,6 +63,19 @@
       </div>
       <div class="progress" id="progress"><div class="progress-bar" id="progressBar"></div></div>
       <button class="pip-close" id="pipClose" type="button" aria-label="Close mini player">✕</button>
+    </div>
+  </section>
+
+  <section class="catalog" id="catalog">
+    <div class="cat-body">
+      <aside class="cat-aside">
+        <div class="cat-num" id="catNum"></div>
+        <p class="cat-desc" id="catDesc"></p>
+        <a class="cat-link" id="catLink" href="#" target="_blank" rel="noopener" hidden>Link<span aria-hidden="true">↗</span></a>
+        <dl class="cat-dl" id="catDl"></dl>
+        <div class="cat-progress" id="catProgress" aria-hidden="true"><span id="catProgressBar"></span></div>
+      </aside>
+      <div class="cat-pages" id="catPages"></div>
     </div>
   </section>
 
@@ -93,8 +93,8 @@
   <div class="about-inner" id="aboutInner"></div>
 </div>
 
-<script src="js/data.js?v=20261107"></script>
-<script src="js/placeholder.js?v=20261107"></script>
-<script src="js/app.js?v=20261107"></script>
+<script src="js/data.js?v=20261110"></script>
+<script src="js/placeholder.js?v=20261110"></script>
+<script src="js/app.js?v=20261110"></script>
 </body>
 </html>

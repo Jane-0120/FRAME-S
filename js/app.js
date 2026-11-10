@@ -469,6 +469,12 @@
 
   /* ───────── open (card → hero) ───────── */
   let opening = false;
+  // same video box for every work (matches .hero in CSS); the catalog peeks in below it
+  const TOP = 76, PEEK = 48; // keep in sync with --top / --peek on .hero
+  const isPhone = () => innerWidth <= 760; // matches the CSS breakpoint
+  const heroHeight = () => (isPhone() ? 56 + innerWidth * 9 / 16 + 112 : Math.min(innerWidth * 9 / 16 + TOP * 2, innerHeight - PEEK));
+  // where the video box sits inside the hero (phones: fixed 16:9 strip under the bar)
+  const videoBox = () => (isPhone() ? { top: 56, h: innerWidth * 9 / 16 } : { top: TOP, h: heroHeight() - TOP * 2 });
   function openWork(i, el) {
     if (opening) return;
     const a = ARTISTS[i];
@@ -477,29 +483,53 @@
     const r = img && img.getBoundingClientRect();
     if (reduced || !r || r.width < 4 || r.bottom < 0 || r.top > innerHeight) { go(); return; }
     opening = true;
-    // the poster grows to fill the screen, then fades away over the catalog
+    // The growing element plays the work's own video (poster behind it until the
+    // first frame arrives), so the opening reads as the video itself zooming in.
+    // It is the detail player's own <video>: it zooms inside the overlay and is then
+    // moved (still playing) into the player, so playback never restarts.
     const fl = document.createElement('div');
     fl.className = 'flip';
     fl.style.backgroundImage = `url("${a._thumb}")`;
+    video.classList.remove('on');
+    video.addEventListener('playing', () => video.classList.add('on'), { once: true });
+    video.removeAttribute('poster');
+    video.src = a.video;
+    fl.append(video);
     document.body.append(fl);
+    startPlayback(); // inside the click, so sound is normally allowed
     if (!home.hidden) { home.classList.add('leaving'); el.classList.add('is-opening'); }
 
+    // land exactly on the picture area inside the hero (contain-fit of the work's ratio),
+    // so cover-fit here and contain-fit in the player match on the last frame
+    const [rw, rh] = String(a.ratio || '16:9').split(':').map(Number);
+    const ratio = rw / rh || 16 / 9;
+    const { top: boxTop, h: boxH } = videoBox();
+    const w = Math.min(innerWidth, boxH * ratio), h = w / ratio;
     const from = { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' };
-    const to = { left: '0px', top: '0px', width: innerWidth + 'px', height: innerHeight + 'px' };
+    const to = { left: (innerWidth - w) / 2 + 'px', top: boxTop + (boxH - h) / 2 + 'px', width: w + 'px', height: h + 'px' };
     Object.assign(fl.style, from);
     const anim = fl.animate([from, to], { duration: 900, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
     anim.onfinish = () => {
-      opening = false;
+      let finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        opening = false;
+        player.insertBefore(video, player.firstChild); // same frame as removing the overlay
+        video.classList.remove('on');
+        fl.remove();
+      };
+      handoff = { id: a.id, done };
       go();
-      fl.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: 'ease', fill: 'forwards' }).onfinish = () => fl.remove();
+      setTimeout(done, 2500); // safety net if the route never fires
     };
   }
+  let handoff = null;
 
   /* ───────── DETAIL ───────── */
   const detail = $('#detail'), player = $('#player'), video = $('#video'), hero = $('#hero');
   const playBtn = $('#playBtn'), progress = $('#progress'), progressBar = $('#progressBar');
   let curWork = -1, pipDismissed = false;
-  let heroInView = false, autoplayArmed = false; // the video follows the catalog and starts once when reached
   const fmt = s => (isFinite(s) ? `${pad(Math.floor(s / 60))}:${pad(Math.floor(s % 60))}` : '00:00');
 
   function setPlayUI() {
@@ -539,7 +569,7 @@
   });
   video.addEventListener('click', () => {
     if (autoMuted) { autoMuted = false; video.muted = false; return; }
-    if (player.classList.contains('pip')) hero.scrollIntoView({ behavior: 'smooth' });
+    if (player.classList.contains('pip')) scrollTo({ top: 0, behavior: 'smooth' });
     else togglePlay();
   });
   $('#pipClose').addEventListener('click', e => {
@@ -570,22 +600,20 @@
     setIdle(false);
     clearTimeout(idleT);
     idleT = setTimeout(() => {
-      if (!video.paused && !player.classList.contains('pip') && heroInView) setIdle(true);
+      if (!video.paused && !player.classList.contains('pip') && scrollY < heroHeight() * 0.5) setIdle(true);
     }, 2400);
   };
   player.addEventListener('pointermove', wake);
   player.addEventListener('pointerdown', wake);
-  addEventListener('scroll', () => { if (player.classList.contains('idle')) setIdle(false); }, { passive: true });
+  addEventListener('scroll', () => { if (player.classList.contains('idle') && scrollY > 40) setIdle(false); }, { passive: true });
   video.addEventListener('play', wake);
   video.addEventListener('pause', wake);
 
   // mini player when the hero scrolls away
   new IntersectionObserver(([e]) => {
     const out = e.intersectionRatio < 0.3;
-    heroInView = e.intersectionRatio >= 0.6;
     if (!out) pipDismissed = false;
     player.classList.toggle('pip', out && !pipDismissed && !video.paused && !detail.hidden);
-    if (heroInView && autoplayArmed && !detail.hidden) { autoplayArmed = false; startPlayback(); }
   }, { threshold: [0, 0.3, 0.6, 1] }).observe(hero);
 
   // catalog
@@ -698,13 +726,19 @@
     $('#catDl').innerHTML = `<dt>Artist</dt><dd>${a.name} ${a.nameKo}</dd><dt>Runtime</dt><dd>${a.runtime}</dd>`;
 
     player.classList.remove('pip', 'has-error', 'idle');
-    setIdle(false);
     pipDismissed = false;
-    autoplayArmed = true;
     const [rw, rh] = String(a.ratio || '16:9').split(':');
     detail.style.setProperty('--ratio', `${rw} / ${rh}`);
-    video.removeAttribute('poster');
-    video.src = a.video;
+    // arriving from the zoom: the video is already playing, just take it back
+    const h = handoff && handoff.id === a.id ? handoff : null;
+    handoff = null;
+    if (h) {
+      h.done();
+    } else {
+      video.removeAttribute('poster');
+      video.src = a.video;
+      startPlayback();
+    }
     setPlayUI();
 
     renderCatalog(i);
@@ -762,7 +796,7 @@
     if (about.classList.contains('open')) { if (e.key === 'Escape') setAbout(false); return; }
     if (!detail.hidden) {
       if (e.key === 'Escape') location.hash = '#/';
-      else if ((e.key === ' ' || e.key === 'k') && heroInView) { e.preventDefault(); togglePlay(); }
+      else if ((e.key === ' ' || e.key === 'k') && scrollY < heroHeight() * 0.6) { e.preventDefault(); togglePlay(); }
       else if (e.key === 'm') { autoMuted = false; video.muted = !video.muted; }
       return;
     }
@@ -778,29 +812,4 @@
   setLayout(LAYOUTS.some(l => l[0] === saved) ? saved : 'stack');
   route();
   requestAnimationFrame(loop);
-
-  /* ───────── exhibition mode ─────────
-     a film plays through to the end once, then the kiosk goes straight back home */
-  video.loop = false;
-  video.addEventListener('ended', () => {
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-    if (video.webkitDisplayingFullscreen && video.webkitExitFullscreen) video.webkitExitFullscreen();
-    if (!detail.hidden) location.hash = '#/';
-  });
-
-  /* ───────── idle reset ─────────
-     after 3 minutes with no input, reload back to a fresh home page;
-     a playing video counts as activity so a viewer isn't cut off mid-film.
-     Only resets once something has changed, so an untouched home page doesn't keep reloading. */
-  const IDLE_MS = 3 * 60 * 1000;
-  let lastActive = Date.now(), touched = false;
-  const markActive = () => { lastActive = Date.now(); touched = true; };
-  ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(t =>
-    addEventListener(t, markActive, { passive: true, capture: true }));
-  setInterval(() => {
-    if (!video.paused && !video.ended) { lastActive = Date.now(); return; }
-    if (Date.now() - lastActive < IDLE_MS) return;
-    if (!touched && detail.hidden && !about.classList.contains('open')) return;
-    location.replace(location.pathname + location.search);
-  }, 5000);
 })();

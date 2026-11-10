@@ -265,14 +265,17 @@ body.is-detail .home-only { display: none; }
 .home.leaving > :not(.stage) { opacity: 0 !important; transition: opacity .4s; }
 
 .flip { position: fixed; z-index: 90; pointer-events: none; overflow: hidden; background: #000 center / cover no-repeat; }
+.flip video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s; }
+.flip video.on { opacity: 1; }
 
 /* ───────── DETAIL ───────── */
 .detail { position: relative; min-height: 100vh; }
 .detail.enter { animation: fadeIn .6s ease both; }
 
-/* one box for every work: 16:9, never taller than the screen; it comes after the catalog */
-/* --top: black band above (and below) the video, taller than the top nav (14px + 34px) */
-.hero { --top: 76px; position: relative; height: min(calc(56.25vw + var(--top) * 2), 100svh); background: #000; }
+/* one box for every work: 16:9, but short enough that the catalog peeks in below (--peek) */
+/* --top: black band above (and below) the video, taller than the top nav (14px + 34px)
+   --peek: how much of the catalog shows below on arrival */
+.hero { --top: 76px; --peek: 48px; position: relative; height: min(calc(56.25vw + var(--top) * 2), calc(100svh - var(--peek))); background: #000; }
 .player {
   position: absolute; inset: var(--top) 0; background: #000; overflow: hidden; /* same black band above and below */
   /* the hero always reads as a dark screening room */
@@ -346,10 +349,10 @@ body.video-idle .topbar { opacity: 0; pointer-events: none; }
 }
 
 /* catalog */
-.catalog { padding: 76px 0 0 6vw; } /* first thing on the page: starts below the top nav */
+.catalog { padding: 0 0 0 6vw; }
 
 .cat-body { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(0, 4fr); gap: 4vw; }
-.cat-aside { position: sticky; top: 76px; align-self: start; }
+.cat-aside { position: sticky; top: 84px; align-self: start; padding-top: 64px; }
 .cat-num { font-size: clamp(28px, 2.6vw, 44px); font-weight: 400; letter-spacing: -.035em; line-height: 1.05; margin-bottom: 24px; }
 .cat-dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; font: 400 12.5px/1.4 var(--mono); letter-spacing: .03em; }
 .cat-dl dt { color: var(--mute); text-transform: uppercase; }
@@ -482,9 +485,9 @@ body.about-open .about-close { display: inline-flex; }
   .player.pip { overflow: hidden; height: auto; }
   .tc { display: none; }
 
-  .catalog { padding: 56px 0 0; }
+  .catalog { padding: 0; }
   .cat-body { grid-template-columns: 1fr; gap: 0; }
-  .cat-aside { position: static; padding: 8px 16px 32px; }
+  .cat-aside { position: static; padding: 36px 16px 32px; }
   .cat-num { font-size: 26px; margin-bottom: 16px; }
   .cat-desc { font-size: 15px; max-width: none; }
   .cat-progress { display: none; }
@@ -508,31 +511,6 @@ body.about-open .about-close { display: inline-flex; }
   .ap-time { text-align: left; }
   .about-list a { grid-template-columns: 20px 1fr; }
   .about-list a span:last-child { display: none; }
-}
-
-/* ───────── exhibition display (27" Mac, 2560×1440) ─────────
-   Same layout as laptops — only controls and text a touch larger so they read at a distance.
-   Only screens well beyond any laptop default match, so phones and laptops are untouched. */
-@media (min-width: 2200px) and (min-height: 1000px) {
-  .mono, .eyebrow { font-size: 13px; }
-
-  /* ── shell ── */
-  .pill { height: 40px; padding: 0 16px; font-size: 13px; }
-  .theme { width: 40px; padding: 0; }
-  .logo { height: 18px; }
-
-  /* ── home ── */
-  .caption .c-name, .caption .c-title { font-size: 18px; }
-  .layout-btn { font-size: 13px; }
-
-  /* ── detail ── */
-  .d-title { font-size: 34px; }
-  .d-name { font-size: 13px; }
-  .btn { height: 42px; padding: 0 18px; font-size: 13px; }
-  .btn.primary { padding: 0 20px 0 18px; }
-  .btn.icon { width: 42px; padding: 0; font-size: 17px; }
-  .cat-desc { font-size: 18px; }
-  .cat-dl { font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
